@@ -21,11 +21,10 @@ contract("Ethpain", accounts => {
     })
 
     it("should list registered parties", async () => {
-      await ethpain.create_party("VOX", "📦", "El partido de las cajas", "KAJA", { from: accounts[0] })
       await ethpain.create_party("Cs", "🍊", "Vaaaaaamoooos!", "COKE", { from: accounts[1] })
 
       assert.equal((await ethpain.read_party(accounts[0])).fake_name, "KAJA")
-      assert.equal((await ethpain.list_parties.call()).length, 3)
+      assert.equal((await ethpain.list_parties.call()).length, 2)
     })
 
     it("should create proposal", async () => {
@@ -41,7 +40,6 @@ contract("Ethpain", accounts => {
       await ethpain.create_proposal(proposals[1])
       await ethpain.create_proposal(proposals[2])
 
-      await ethpain.create_party("VOX", "📦", "El partido de las cajas", "KAJA")
       await ethpain.create_program(proposalIds, percentages)
 
       let program = await ethpain.read_program.call(accounts[0])
@@ -62,5 +60,21 @@ contract("Ethpain", accounts => {
       assert.equal(await ethpain.read_proposal_result(0), true)
 
     })
+
+    it("post an election seat results", async ()=> {
+      let parties = ["Cs", "VOX"]
+      let seats = ["56", "20"]
+
+      assert.equal((await ethpain.read_party(accounts[0])).seats, "0")
+      assert.equal((await ethpain.read_party(accounts[1])).seats, "0")
+
+      await.ethpain.post_seats(parties, seats)
+
+      assert.equal((await ethpain.read_party(accounts[0])).seats, "20")
+      assert.equal((await ethpain.read_party(accounts[1])).seats, "56")
+
+    })
+
+
   })
 })

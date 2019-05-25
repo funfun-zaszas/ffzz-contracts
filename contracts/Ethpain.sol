@@ -48,11 +48,12 @@ contract Ethpain {
     party_map[msg.sender].emoji = _emoji;
     party_map[msg.sender].description = _description;
     party_map[msg.sender].fake_name = _fake_name;
+    party_map[msg.sender].seats = 0;
     party_addresses[_label] = msg.sender;
   }
 
-  function read_party(address party_address) public view returns(string memory label, string memory emoji, string memory description, string memory fake_name) {
-    return (party_map[msg.sender].label, party_map[msg.sender].emoji, party_map[msg.sender].description, party_map[party_address].fake_name);
+  function read_party(address party_address) public view returns(string memory label, string memory emoji, string memory description, string memory fake_name, uint party_seats) {
+    return (party_map[msg.sender].label, party_map[msg.sender].emoji, party_map[msg.sender].description, party_map[party_address].fake_name, party_map[party_address].seats);
   }
 
   function create_proposal(string memory new_proposal) public returns(uint256 id) {
@@ -84,5 +85,14 @@ contract Ethpain {
 
   function read_proposal_result(uint256 id) public view returns(bool bool_result) {
     return proposal_success[id];
+  }
+
+  function post_seats(string[] memory _labels, uint[] memory _seats) public {
+    uint len = _labels.length;
+    for (uint i=0; i<len; i++) {
+      address party_address = party_addresses[_labels[i]];
+
+      party_map[party_address].seats = _seats[i];
+    }
   }
 }
