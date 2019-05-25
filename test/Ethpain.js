@@ -1,10 +1,11 @@
 const Ethpain = artifacts.require("Ethpain")
+const WBI = artifacts.require("./WitnetBridgeInterface.sol")
 
 contract("Ethpain", accounts => {
   describe("Ethpain test suite", () => {
     let ethpain
     before(async () => {
-      ethpain = await Ethpain.deployed()
+      ethpain = await Ethpain.new(WBI.address, "ethpain", { value: web3.utils.toWei("1", "ether") })
     })
 
     it("should have some ETH", async () => {
@@ -46,10 +47,21 @@ contract("Ethpain", accounts => {
 
       let program = await ethpain.read_program.call(accounts[0])
       assert.equal(program.proposal_ids.length, program.percentages.length)
-      for (i = 0; i < program.proposal_ids.length; i++) { 
+      for (i = 0; i < program.proposal_ids.length; i++) {
         assert.equal(program.proposal_ids[i].toNumber(), proposalIds[i])
         assert.equal(program.percentages[i].toNumber(), percentages[i])
       }
+    })
+
+    it("create a proposal and post result", async ()=> {
+      let proposal = "My new proposal";
+      await ethpain.create_proposal(proposal)
+
+      let bool_result = true
+      await ethpain.post_proposal_result(0, bool_result)
+
+      assert.equal(await ethpain.read_proposal_result(0), true)
+
     })
   })
 })

@@ -62,4 +62,12 @@ contract Ethpain {
   function read_program(address party_address) public view returns(uint256[] memory proposal_ids, uint[] memory percentages) {
     return (program_map[party_address].id_proposals, program_map[party_address].percentages);
   }
+
+  function post_proposal_result(uint256 proposal_id, bool bool_result) public {
+    proposal_success[proposal_id] = bool_result;
+  }
+
+  function read_proposal_result(uint256 id) public view returns(bool bool_result) {
+    return proposal_success[id];
+  }
 }
