@@ -14,7 +14,9 @@
     "solium:fix": "solium -d contracts --fix",
     "lint": "eslint ./test",
     "lint:fix": "eslint ./test --fix",
-    "coverage": "solidity-coverage"
+    "coverage": "solidity-coverage",
+    "run:local": "ganache-cli",
+    "deploy:local": "truffle deploy --network local"
   },
   "author": "Witnet Foundation <info@witnet.foundation>",
   "repository": {
