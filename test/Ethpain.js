@@ -17,13 +17,13 @@ contract("Ethpain", accounts => {
     })
 
     it("should create party", async () => {
-      await ethpain.create_party(web3.utils.utf8ToHex("VOX"), "📦", "El partido de las cajas", "KAJA")
+      await ethpain.create_party(web3.utils.utf8ToHex("VOX"), "📦", "El partido de las cajas", "KAJA", "dr_kaja")
       let party = await ethpain.read_party(accounts[0])
       assert.equal(party.fake_name, "KAJA")
     })
 
     it("should list registered parties", async () => {
-      await ethpain.create_party(web3.utils.utf8ToHex("Cs"), "🍊", "Vaaaaaamoooos!", "COKE", { from: accounts[1] })
+      await ethpain.create_party(web3.utils.utf8ToHex("Cs"), "🍊", "Vaaaaaamoooos!", "COKE", "dr_coke", { from: accounts[1] })
 
       assert.equal((await ethpain.read_party(accounts[0])).fake_name, "KAJA")
       assert.equal((await ethpain.list_parties.call()).length, 2)
@@ -62,11 +62,12 @@ contract("Ethpain", accounts => {
     })
 
     it("post an election seat results", async () => {
-      let parties = [web3.utils.utf8ToHex("Cs"), web3.utils.utf8ToHex("VOX")]
-      let seats = [56, 175]
       assert.equal((await ethpain.read_party(accounts[0])).seats, 0)
       assert.equal((await ethpain.read_party(accounts[1])).seats, 0)
-      await ethpain.post_seats(parties, seats)
+      await ethpain.create_elections()
+      await wbi.report_result_election(5, 175)
+      await wbi.report_result_election(6, 56)
+      await ethpain.update_seats()
       assert.equal((await ethpain.read_party(accounts[0])).seats, 175)
       assert.equal((await ethpain.read_party(accounts[1])).seats, 56)
     })
