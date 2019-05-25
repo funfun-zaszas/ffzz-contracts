@@ -8,11 +8,11 @@ contract Ethpain {
 
   address owner;
   string public name;
-  uint seats;
+  uint total_seats;
   // bytes public election_wdr;
 
   struct Party {
-    string label;
+    bytes32 label;
     string fake_name;
     string emoji;
     string description;
@@ -25,7 +25,7 @@ contract Ethpain {
   }
 
   address[] public parties;
-  mapping (string => address) party_addresses;
+  mapping (bytes32 => address) party_addresses;
 
   mapping (address => Party) party_map;
   mapping (address => Program) program_map;
@@ -34,7 +34,7 @@ contract Ethpain {
   mapping (uint256 => bool) proposal_success;
 
   constructor (address _wbi, string memory _name, uint _seats) public payable {
-    seats = _seats;
+    total_seats = _seats;
     wbi = WitnetBridgeInterface(_wbi);
     owner = msg.sender;
     name = _name;
@@ -42,7 +42,7 @@ contract Ethpain {
     // wbi.post_dr(election_wdr);
   }
 
-  function create_party(string memory _label, string memory _emoji, string memory _description, string memory _fake_name) public {
+  function create_party(bytes32 _label, string memory _emoji, string memory _description, string memory _fake_name) public {
     parties.push(msg.sender);
     party_map[msg.sender].label = _label;
     party_map[msg.sender].emoji = _emoji;
@@ -52,7 +52,7 @@ contract Ethpain {
     party_addresses[_label] = msg.sender;
   }
 
-  function read_party(address party_address) public view returns(string memory label, string memory emoji, string memory description, string memory fake_name, uint party_seats) {
+  function read_party(address party_address) public view returns(bytes32 label, string memory emoji, string memory description, string memory fake_name, uint seats) {
     return (party_map[msg.sender].label, party_map[msg.sender].emoji, party_map[msg.sender].description, party_map[party_address].fake_name, party_map[party_address].seats);
   }
 
@@ -87,9 +87,9 @@ contract Ethpain {
     return proposal_success[id];
   }
 
-  function post_seats(string[] memory _labels, uint[] memory _seats) public {
+  function post_seats(bytes32[] memory _labels, uint[] memory _seats) public {
     uint len = _labels.length;
-    for (uint i=0; i<len; i++) {
+    for (uint i = 0; i < len; i++) {
       address party_address = party_addresses[_labels[i]];
 
       party_map[party_address].seats = _seats[i];
