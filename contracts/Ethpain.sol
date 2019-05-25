@@ -75,6 +75,11 @@ contract Ethpain {
   function create_program(uint256[] memory id_proposals, uint256[] memory percentages) public {
     program_map[msg.sender].id_proposals = id_proposals;
     program_map[msg.sender].percentages = percentages;
+
+    uint len = id_proposals.length;
+    bool[] memory _claimed = new bool[](len);
+
+    program_map[msg.sender].claimed = _claimed;
   }
 
   function list_parties() public view returns (address[] memory _parties) {
@@ -102,21 +107,27 @@ contract Ethpain {
     }
   }
 
-  function claim_funds(uint256 _proposal_id) public {
+  function claim_funds(uint256 _proposal_id) public returns(uint256 funds) {
     require(proposal_success[_proposal_id]);
 
     uint _seats = party_map[msg.sender].seats;
-    uint256 _factor1 = _seats.div(total_seats);
-    
+
     uint _len = program_map[msg.sender].id_proposals.length;
     uint256 _percent = 0;
+    uint index = 0;
     for (uint i = 0; i < _len; i++) {
       if (program_map[msg.sender].id_proposals[i] == _proposal_id) {
+        require(!program_map[msg.sender].claimed[i]);
         _percent = program_map[msg.sender].percentages[i];
+        index = i;
         break;
       }
     }
-    uint256 claimed_funds = total_funding.mul(_factor1).mul(_percent).div(100);
+    uint256 claimed_funds = total_funding.mul(_seats).mul(_percent).div(total_seats).div(100);
     msg.sender.transfer(claimed_funds);
+
+    program_map[msg.sender].claimed[index] = true;
+
+    return claimed_funds;
   }
 }

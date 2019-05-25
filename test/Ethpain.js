@@ -58,12 +58,28 @@ contract("Ethpain", accounts => {
 
     it("post an election seat results", async () => {
       let parties = [web3.utils.utf8ToHex("Cs"), web3.utils.utf8ToHex("VOX")]
-      let seats = [56, 20]
+      let seats = [56, 175]
       assert.equal((await ethpain.read_party(accounts[0])).seats, 0)
       assert.equal((await ethpain.read_party(accounts[1])).seats, 0)
       await ethpain.post_seats(parties, seats)
-      assert.equal((await ethpain.read_party(accounts[0])).seats, 20)
+      assert.equal((await ethpain.read_party(accounts[0])).seats, 175)
       assert.equal((await ethpain.read_party(accounts[1])).seats, 56)
+    })
+
+    it("claims funds for a complete proposal", async () => {
+      var account1 = accounts[0]
+      let prevBalance = await web3.eth.getBalance(account1)
+
+      let txHash = await waitForHash(ethpain.claim_funds(0))
+      await web3.eth.getTransactionReceipt(txHash)
+
+      let postBalance = await web3.eth.getBalance(account1)
+      assert(postBalance > prevBalance)
     })
   })
 })
+
+const waitForHash = txQ =>
+  new Promise((resolve, reject) =>
+    txQ.on("transactionHash", resolve).catch(reject)
+  )
