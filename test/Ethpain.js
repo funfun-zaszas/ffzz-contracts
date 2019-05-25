@@ -27,17 +27,20 @@ contract("Ethpain", accounts => {
     })
 
     it("should create proposal", async () => {
-      await ethpain.create_proposal("My new proposal")
-      assert.equal(await ethpain.read_proposal.call(0), "My new proposal")
+      await ethpain.create_proposal("My new proposal", "My new dr 1")
+      let proposal = await ethpain.read_proposal(0)
+      assert.equal(proposal.description, "My new proposal")
+      assert.equal(proposal.dr, "My new dr 1")
     })
 
     it("should create program with proposals", async () => {
       let proposals = ["My new proposal 1", "My new proposal 2", "My new proposal 3"]
+      let data_requests = ["My new dr 1", "My new dr 2", "My new dr 3"]
       let proposalIds = [0, 1, 2]
       let percentages = [50, 25, 25]
-      await ethpain.create_proposal(proposals[0])
-      await ethpain.create_proposal(proposals[1])
-      await ethpain.create_proposal(proposals[2])
+      await ethpain.create_proposal(proposals[0], data_requests[0])
+      await ethpain.create_proposal(proposals[1], data_requests[1])
+      await ethpain.create_proposal(proposals[2], data_requests[2])
 
       await ethpain.create_program(proposalIds, percentages)
 
@@ -50,8 +53,6 @@ contract("Ethpain", accounts => {
     })
 
     it("create a proposal and post result", async () => {
-      let proposal = "My new proposal"
-      await ethpain.create_proposal(proposal)
       await ethpain.post_proposal_result(0, true)
       assert.equal(await ethpain.read_proposal_result(0), true)
     })

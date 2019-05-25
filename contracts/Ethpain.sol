@@ -23,6 +23,11 @@ contract Ethpain {
     uint seats;
   }
 
+  struct Proposal {
+    string description;
+    string data_request;
+  }
+
   struct Program {
     uint256[] id_proposals;
     uint[] percentages;
@@ -35,7 +40,7 @@ contract Ethpain {
   mapping (address => Party) party_map;
   mapping (address => Program) program_map;
 
-  mapping (uint256 => string) proposal_map;
+  mapping (uint256 => Proposal) proposal_map;
   mapping (uint256 => bool) proposal_success;
 
   constructor (address _wbi, string memory _name, uint _seats) public payable {
@@ -62,14 +67,15 @@ contract Ethpain {
     return (party_map[msg.sender].label, party_map[msg.sender].emoji, party_map[msg.sender].description, party_map[party_address].fake_name, party_map[party_address].seats);
   }
 
-  function create_proposal(string memory new_proposal) public returns(uint256 id) {
-    uint256 dr_id = wbi.post_dr(new_proposal);
-    proposal_map[dr_id] = new_proposal;
+  function create_proposal(string memory proposal_description, string memory proposal_dr) public returns(uint256 id) {
+    uint256 dr_id = wbi.post_dr(proposal_dr);
+    proposal_map[dr_id].description = proposal_description;
+    proposal_map[dr_id].data_request = proposal_dr;
     return dr_id;
   }
 
-  function read_proposal(uint256 id) public view returns(string memory proposal) {
-    return proposal_map[id];
+  function read_proposal(uint256 id) public view returns(string memory description, string memory dr) {
+    return (proposal_map[id].description, proposal_map[id].data_request);
   }
 
   function create_program(uint256[] memory id_proposals, uint256[] memory percentages) public {
