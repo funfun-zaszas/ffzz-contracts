@@ -8,7 +8,16 @@ contract Ethpain {
 
   address owner;
   string public name;
+  uint seats;
   // bytes public election_wdr;
+
+  struct Party {
+    string label;
+    string fake_name;
+    string emoji;
+    string description;
+    uint seats;
+  }
 
   struct Program {
     uint[] percentages;
@@ -16,14 +25,16 @@ contract Ethpain {
   }
 
   address[] public parties;
+  mapping (string => address) party_addresses;
 
-  mapping (address => string) party_map;
+  mapping (address => Party) party_map;
   mapping (address => Program) program_map;
 
   mapping (uint256 => string) proposal_map;
   mapping (uint256 => bool) proposal_success;
 
-  constructor (address _wbi, string memory _name) public payable {
+  constructor (address _wbi, string memory _name, uint _seats) public payable {
+    seats = _seats;
     wbi = WitnetBridgeInterface(_wbi);
     owner = msg.sender;
     name = _name;
@@ -31,13 +42,17 @@ contract Ethpain {
     // wbi.post_dr(election_wdr);
   }
 
-  function create_party(string memory party_name) public {
+  function create_party(string memory _label, string memory _emoji, string memory _description, string memory _fake_name) public {
     parties.push(msg.sender);
-    party_map[msg.sender] = party_name;
+    party_map[msg.sender].label = _label;
+    party_map[msg.sender].emoji = _emoji;
+    party_map[msg.sender].description = _description;
+    party_map[msg.sender].fake_name = _fake_name;
+    party_addresses[_label] = msg.sender;
   }
 
-  function read_party(address party_address) public view returns(string memory party_name) {
-    return party_map[party_address];
+  function read_party(address party_address) public view returns(string memory label, string memory emoji, string memory description, string memory fake_name) {
+    return (party_map[msg.sender].label, party_map[msg.sender].emoji, party_map[msg.sender].description, party_map[party_address].fake_name);
   }
 
   function create_proposal(string memory new_proposal) public returns(uint256 id) {

@@ -5,7 +5,7 @@ contract("Ethpain", accounts => {
   describe("Ethpain test suite", () => {
     let ethpain
     before(async () => {
-      ethpain = await Ethpain.new(WBI.address, "ethpain", { value: web3.utils.toWei("1", "ether") })
+      ethpain = await Ethpain.deployed()
     })
 
     it("should have some ETH", async () => {
@@ -15,18 +15,17 @@ contract("Ethpain", accounts => {
     })
 
     it("should create party", async () => {
-      await ethpain.create_party("KAJA")
-      assert.equal(await ethpain.read_party(accounts[0]), "KAJA")
+      await ethpain.create_party("VOX", "📦", "El partido de las cajas", "KAJA")
+      let party = await ethpain.read_party(accounts[0])
+      assert.equal(party.fake_name, "KAJA")
     })
 
     it("should list registered parties", async () => {
-      await ethpain.create_party("WECAN", { from: accounts[1] })
-      await ethpain.create_party("JOSE", { from: accounts[2] })
-      await ethpain.create_party("ROSE", { from: accounts[3] })
-      await ethpain.create_party("COKE", { from: accounts[4] })
+      await ethpain.create_party("VOX", "📦", "El partido de las cajas", "KAJA", { from: accounts[0] })
+      await ethpain.create_party("Cs", "🍊", "Vaaaaaamoooos!", "COKE", { from: accounts[1] })
 
-      assert.equal(await ethpain.read_party(accounts[0]), "KAJA")
-      assert.equal((await ethpain.list_parties.call()).length, 5)
+      assert.equal((await ethpain.read_party(accounts[0])).fake_name, "KAJA")
+      assert.equal((await ethpain.list_parties.call()).length, 3)
     })
 
     it("should create proposal", async () => {
@@ -42,7 +41,7 @@ contract("Ethpain", accounts => {
       await ethpain.create_proposal(proposals[1])
       await ethpain.create_proposal(proposals[2])
 
-      await ethpain.create_party("KAJA")
+      await ethpain.create_party("VOX", "📦", "El partido de las cajas", "KAJA")
       await ethpain.create_program(proposalIds, percentages)
 
       let program = await ethpain.read_program.call(accounts[0])
