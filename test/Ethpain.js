@@ -44,8 +44,12 @@ contract("Ethpain", accounts => {
       await ethpain.create_party("KAJA")
       await ethpain.create_program(proposalIds, percentages)
 
-      assert.equal(await ethpain.read_program_percentages(accounts[0]), percentages)
-      assert.equal(await ethpain.read_program_proposals(accounts[0]), proposal_ids)
+      let program = await ethpain.read_program.call(accounts[0])
+      assert.equal(program.proposal_ids.length, program.percentages.length)
+      for (i = 0; i < program.proposal_ids.length; i++) { 
+        assert.equal(program.proposal_ids[i].toNumber(), proposalIds[i])
+        assert.equal(program.percentages[i].toNumber(), percentages[i])
+      }
     })
   })
 })

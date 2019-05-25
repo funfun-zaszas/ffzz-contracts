@@ -17,10 +17,11 @@ contract Ethpain {
 
   address[] public parties;
 
-  uint256 proposal_counter;
-  mapping (uint256 => string) proposal_map;
   mapping (address => string) party_map;
   mapping (address => Program) program_map;
+
+  mapping (uint256 => string) proposal_map;
+  mapping (uint256 => bool) proposal_success;
 
   constructor (address _wbi, string memory _name) public payable {
     wbi = WitnetBridgeInterface(_wbi);
@@ -40,10 +41,9 @@ contract Ethpain {
   }
 
   function create_proposal(string memory new_proposal) public returns(uint256 id) {
-    id = proposal_counter++;
-    proposal_map[id] = new_proposal;
-
-    return id;
+    uint256 dr_id = wbi.post_dr(new_proposal);
+    proposal_map[dr_id] = new_proposal;
+    return dr_id;
   }
 
   function read_proposal(uint256 id) public view returns(string memory proposal) {
@@ -59,12 +59,7 @@ contract Ethpain {
     return parties;
   }
 
-  function read_program_percentages(address party_address) public view returns(uint[] memory percentages) {
-    return program_map[party_address].percentages;
-
-  }
-
-  function read_program_proposals(address party_address) public view returns(uint256[] memory ids) {
-    return program_map[party_address].id_proposals;
+  function read_program(address party_address) public view returns(uint256[] memory proposal_ids, uint[] memory percentages) {
+    return (program_map[party_address].id_proposals, program_map[party_address].percentages);
   }
 }
