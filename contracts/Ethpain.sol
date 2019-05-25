@@ -1,15 +1,18 @@
 pragma solidity ^0.5.0;
 
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "./SafeMath.sol";
 import "./WitnetBridgeInterface.sol";
 
 contract Ethpain {
+
+  using SafeMath for uint256;
 
   WitnetBridgeInterface wbi;
 
   address owner;
   string public name;
   uint total_seats;
+  uint256 total_funding;
   // bytes public election_wdr;
 
   struct Party {
@@ -21,8 +24,9 @@ contract Ethpain {
   }
 
   struct Program {
-    uint[] percentages;
     uint256[] id_proposals;
+    uint[] percentages;
+    bool[] claimed;
   }
 
   address[] public parties;
@@ -35,6 +39,7 @@ contract Ethpain {
   mapping (uint256 => bool) proposal_success;
 
   constructor (address _wbi, string memory _name, uint _seats) public payable {
+    total_funding = msg.value;
     total_seats = _seats;
     wbi = WitnetBridgeInterface(_wbi);
     owner = msg.sender;
@@ -95,5 +100,23 @@ contract Ethpain {
 
       party_map[party_address].seats = _seats[i];
     }
+  }
+
+  function claim_funds(uint256 _proposal_id) public {
+    require(proposal_success[_proposal_id]);
+
+    uint _seats = party_map[msg.sender].seats;
+    uint256 _factor1 = _seats.div(total_seats);
+    
+    uint _len = program_map[msg.sender].id_proposals.length;
+    uint256 _percent = 0;
+    for (uint i = 0; i < _len; i++) {
+      if (program_map[msg.sender].id_proposals[i] == _proposal_id) {
+        _percent = program_map[msg.sender].percentages[i];
+        break;
+      }
+    }
+    uint256 claimed_funds = total_funding.mul(_factor1).mul(_percent).div(100);
+    msg.sender.transfer(claimed_funds);
   }
 }
