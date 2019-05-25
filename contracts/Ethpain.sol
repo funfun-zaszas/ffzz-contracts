@@ -11,8 +11,8 @@ contract Ethpain {
   // bytes public election_wdr;
 
   struct Program {
-    uint256[] percentage;
-    uint256[] id_proposal;
+    uint[] percentages;
+    uint256[] id_proposals;
   }
 
   address[] public parties;
@@ -50,13 +50,21 @@ contract Ethpain {
     return proposal_map[id];
   }
 
-  function create_program(uint256[] memory id_proposal, uint256[] memory percentage) public {
-    program_map[msg.sender].id_proposal = id_proposal;
-    program_map[msg.sender].percentage = percentage;
+  function create_program(uint256[] memory id_proposals, uint256[] memory percentages) public {
+    program_map[msg.sender].id_proposals = id_proposals;
+    program_map[msg.sender].percentages = percentages;
   }
 
   function list_parties() public view returns (address[] memory _parties) {
     return parties;
   }
 
+  function read_program_percentages(address party_address) public view returns(uint[] memory percentages) {
+    return program_map[party_address].percentages;
+
+  }
+
+  function read_program_proposals(address party_address) public view returns(uint256[] memory ids) {
+    return program_map[party_address].id_proposals;
+  }
 }
