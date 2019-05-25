@@ -8,8 +8,15 @@ contract WitnetBridgeInterface {
     uint256 reward;
   }
 
+  struct ElectionDataRequest {
+    string script;
+    uint result;
+    uint256 reward;
+  }
+
   uint256 counter;
   mapping (uint256 => DataRequest) public requests;
+  mapping (uint256 => ElectionDataRequest) public election_requests;
 
   event PostDataRequest(address indexed _from, uint256 id);
   event PostResult(address indexed _from, uint256 id);
@@ -38,7 +45,17 @@ contract WitnetBridgeInterface {
     emit PostResult(msg.sender, id);
   }
 
+  function report_result_election (uint256 id, uint result) public {
+    election_requests[id].result = result;
+    msg.sender.transfer(election_requests[id].reward);
+    emit PostResult(msg.sender, id);
+  }
+
   function read_result (uint256 id) public view returns(bool result){
     return requests[id].result;
+  }
+
+  function read_result_election (uint256 id) public view returns(uint result){
+    return election_requests[id].result;
   }
 }

@@ -21,6 +21,8 @@ contract Ethpain {
     string emoji;
     string description;
     uint seats;
+    string dr;
+    uint256 dr_id;
   }
 
   struct Proposal {
@@ -47,17 +49,18 @@ contract Ethpain {
     wbi = WitnetBridgeInterface(_wbi);
     owner = msg.sender;
     name = _name;
-    // election_wdr = _election_wdr;
+    //election_wdr = _election_wdr;
     // wbi.post_dr(election_wdr);
   }
 
-  function create_party(bytes32 _label, string memory _emoji, string memory _description, string memory _fake_name) public {
+  function create_party(bytes32 _label, string memory _emoji, string memory _description, string memory _fake_name, string memory _dr) public {
     parties.push(msg.sender);
     party_map[msg.sender].label = _label;
     party_map[msg.sender].emoji = _emoji;
     party_map[msg.sender].description = _description;
     party_map[msg.sender].fake_name = _fake_name;
     party_map[msg.sender].seats = 0;
+    party_map[msg.sender].dr = _dr;
     party_addresses[_label] = msg.sender;
   }
 
@@ -70,6 +73,17 @@ contract Ethpain {
     proposal_map[dr_id].description = proposal_description;
     proposal_map[dr_id].data_request = proposal_dr;
     return dr_id;
+  }
+
+  function create_elections() public {
+    uint len = parties.length;
+    for (uint i = 0; i < len; i++) {
+      address _party_address = parties[i];
+      string memory _dr = party_map[_party_address].dr;
+
+      uint256 _dr_id = wbi.post_dr(_dr);
+      party_map[_party_address].dr_id = _dr_id;
+    }
   }
 
   function read_proposal(uint256 id) public view returns(string memory description, string memory dr) {
@@ -98,12 +112,12 @@ contract Ethpain {
     return wbi.read_result(id);
   }
 
-  function post_seats(bytes32[] memory _labels, uint[] memory _seats) public {
-    uint len = _labels.length;
+  function update_seats() public {
+    uint len = parties.length;
     for (uint i = 0; i < len; i++) {
-      address party_address = party_addresses[_labels[i]];
-
-      party_map[party_address].seats = _seats[i];
+      address _party_address = parties[i];
+      uint _seats = wbi.read_result_election(party_map[_party_address].dr_id);
+      party_map[_party_address].seats = _seats;
     }
   }
 
