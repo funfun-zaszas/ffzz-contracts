@@ -9,8 +9,7 @@ contract("Ethpain", _accounts => {
 
     it("should salute (async)", async () => {
       assert.equal(await ethpain.name.call(), "ethpain")
-      assert.equal(await ethpain.election_wdr.call(), "winner_witnet_dr")
-
+      assert.equal(await ethpain.election_wdr.call(), web3.utils.fromAscii("winner_witnet_dr"))
       assert.equal(await web3.eth.getBalance(ethpain.address), web3.utils.toWei("1", "ether"))
     })
   })

@@ -1,15 +1,22 @@
 pragma solidity ^0.5.0;
 
+import "./WitnetBridgeInterface.sol";
+
 contract Ethpain {
+
+  WitnetBridgeInterface wbi;
 
   address owner;
   string public name;
-  string public election_wdr;
+  bytes public election_wdr;
 
-
-  constructor (string memory _name, string memory _election_wdr) public payable {
+  constructor (address _wbi, string memory _name, bytes memory _election_wdr) public payable {
+    wbi = WitnetBridgeInterface(_wbi);
     owner = msg.sender;
     name = _name;
     election_wdr = _election_wdr;
+    wbi.post_dr(election_wdr);
   }
+
+
 }

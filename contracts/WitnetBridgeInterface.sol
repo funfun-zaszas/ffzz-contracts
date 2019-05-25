@@ -19,7 +19,7 @@ contract WitnetBridgeInterface {
     counter = 0;
   }
 
-  function post_dr(bytes memory dr) public payable returns(uint256 id) {
+  function post_dr (bytes memory dr) public payable returns(uint256 id) {
     id = counter++;
     requests[id].script = dr;
     requests[id].result = "";
@@ -28,7 +28,7 @@ contract WitnetBridgeInterface {
     return id;
   }
 
-  function read_dr(uint256 id) public view returns(bytes memory dr) {
+  function read_dr (uint256 id) public view returns(bytes memory dr) {
     return requests[id].script;
   }
 
