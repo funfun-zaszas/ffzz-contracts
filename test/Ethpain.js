@@ -18,6 +18,16 @@ contract("Ethpain", accounts => {
       assert.equal(await ethpain.read_party(accounts[0]), "KAJA")
     })
 
+    it("should list registered parties", async () => {
+      await ethpain.create_party("WECAN", { from: accounts[1] })
+      await ethpain.create_party("JOSE", { from: accounts[2] })
+      await ethpain.create_party("ROSE", { from: accounts[3] })
+      await ethpain.create_party("COKE", { from: accounts[4] })
+
+      assert.equal(await ethpain.read_party(accounts[0]), "KAJA")
+      assert.equal((await ethpain.list_parties.call()).length, 5)
+    })
+
     it("should create proposal", async () => {
       await ethpain.create_proposal("My new proposal")
       assert.equal(await ethpain.read_proposal.call(0), "My new proposal")
@@ -25,14 +35,14 @@ contract("Ethpain", accounts => {
 
     it("should create program with proposals", async () => {
       let proposals = ["My new proposal 1", "My new proposal 2", "My new proposal 3"]
-      let proposal_ids = [0, 1, 2]
+      let proposalIds = [0, 1, 2]
       let percentages = [50, 25, 25]
       await ethpain.create_proposal(proposals[0])
       await ethpain.create_proposal(proposals[1])
       await ethpain.create_proposal(proposals[2])
 
       await ethpain.create_party("KAJA")
-      await ethpain.create_program(proposal_ids, percentages)
+      await ethpain.create_program(proposalIds, percentages)
     })
   })
 })

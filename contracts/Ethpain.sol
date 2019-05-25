@@ -55,5 +55,8 @@ contract Ethpain {
     program_map[msg.sender].percentage = percentage;
   }
 
+  function list_parties() public view returns (address[] memory _parties) {
+    return parties;
+  }
 
 }
