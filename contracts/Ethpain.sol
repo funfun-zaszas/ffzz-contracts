@@ -47,9 +47,9 @@ contract Ethpain {
     return proposal_map[id];
   }
 
-  function create_program(uint256[] memory id_proposal, uint256[] memory percentage, address party_address) public {
-    program_map[party_address].id_proposal = id_proposal;
-    program_map[party_address].percentage = percentage;
+  function create_program(uint256[] memory id_proposal, uint256[] memory percentage) public {
+    program_map[msg.sender].id_proposal = id_proposal;
+    program_map[msg.sender].percentage = percentage;
   }
 
 
