@@ -6,7 +6,6 @@
   "scripts": {
     "test": "truffle test --network development",
     "console": "truffle console --network development",
-    "postinstall": "npm run compile-contracts",
     "compile-contracts": "truffle compile --all",
     "fmt": "solium -d contracts && eslint ./test",
     "fmt!": "solium -d contracts --fix && eslint ./test --fix",
@@ -30,7 +29,8 @@
   ],
   "license": "GPL-3.0",
   "dependencies": {
-    "truffle-hdwallet-provider": "^1.0.7"
+    "truffle-hdwallet-provider": "^1.0.7",
+    "zeppelin-solidity": "^1.12.0"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
