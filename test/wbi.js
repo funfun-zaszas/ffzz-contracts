@@ -15,8 +15,8 @@ contract("WBI", accounts => {
       var account1 = accounts[0]
       let actualBalance1 = await web3.eth.getBalance(account1)
 
-      const drBytes = web3.utils.fromAscii("This is a DR")
-      const drBytes2 = web3.utils.fromAscii("This is a second DR")
+      const drBytes = "This is a DR"
+      const drBytes2 = "This is a second DR"
 
       const tx = wbiInstance.post_dr(drBytes, {
         from: account1,
@@ -47,17 +47,17 @@ contract("WBI", accounts => {
       let actualBalance1 = await web3.eth.getBalance(account1)
       let actualBalance2 = await web3.eth.getBalance(account2)
 
-      const drBytes = web3.utils.fromAscii("This is a DR")
-      const resBytes = web3.utils.fromAscii("This is a result")
+      const dr = "This is a DR"
+      const result = true
 
-      const tx = wbiInstance.post_dr(drBytes, {
+      const tx = wbiInstance.post_dr(dr, {
         from: account1,
         value: web3.utils.toWei("1", "ether"),
       })
       await waitForHash(tx)
 
       // report result
-      let restx = wbiInstance.report_result(0, resBytes, { from: account2 })
+      let restx = wbiInstance.report_result(0, true, { from: account2 })
       await waitForHash(restx)
 
       let afterBalance1 = await web3.eth.getBalance(account1)
@@ -70,12 +70,12 @@ contract("WBI", accounts => {
       assert.equal(0, contractBalanceAfter)
 
       let readResBytes = await wbiInstance.read_result.call(0)
-      assert.equal(resBytes, readResBytes)
+      assert.equal(result, readResBytes)
     })
 
     it("should return the data request id", async () => {
-      const drBytes1 = web3.utils.fromAscii("This is a DR")
-      const drBytes2 = web3.utils.fromAscii("This is a second DR")
+      const drBytes1 = "This is a DR"
+      const drBytes2 = "This is a second DR"
 
       const tx1 = wbiInstance.post_dr(drBytes1, {
         from: accounts[0],
@@ -99,7 +99,7 @@ contract("WBI", accounts => {
     })
 
     it("should emit an event with the id", async () => {
-      const drBytes = web3.utils.fromAscii("This is a DR")
+      const drBytes = "This is a DR"
 
       const tx = await wbiInstance.post_dr(drBytes)
       truffleAssert.eventEmitted(tx, "PostDataRequest", (ev) => {
@@ -110,8 +110,8 @@ contract("WBI", accounts => {
     })
 
     it("should subscribe to an event, wait for its emision, and read result", async () => {
-      const drBytes = web3.utils.fromAscii("This is a DR")
-      const resBytes = web3.utils.fromAscii("This is a result")
+      const drBytes = "This is a DR"
+      const resBytes = true
 
       const tx1 = wbiInstance.post_dr(drBytes, {
         from: accounts[0],
