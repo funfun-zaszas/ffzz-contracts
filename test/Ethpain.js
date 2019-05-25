@@ -14,7 +14,7 @@ contract("Ethpain", accounts => {
     })
 
     it("should create party", async () => {
-      await ethpain.create_party(accounts[0], "KAJA")
+      await ethpain.create_party("KAJA")
       assert.equal(await ethpain.read_party(accounts[0]), "KAJA")
     })
 
@@ -31,7 +31,7 @@ contract("Ethpain", accounts => {
       await ethpain.create_proposal(proposals[1])
       await ethpain.create_proposal(proposals[2])
 
-      await ethpain.create_party(accounts[0], "KAJA")
+      await ethpain.create_party("KAJA")
       await ethpain.create_program(proposal_ids, percentages)
     })
   })

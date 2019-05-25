@@ -15,6 +15,8 @@ contract Ethpain {
     uint256[] id_proposal;
   }
 
+  address[] public parties;
+
   uint256 proposal_counter;
   mapping (uint256 => string) proposal_map;
   mapping (address => string) party_map;
@@ -28,8 +30,9 @@ contract Ethpain {
     // wbi.post_dr(election_wdr);
   }
 
-  function create_party(address party_address, string memory party_name) public {
-    party_map[party_address] = party_name;
+  function create_party(string memory party_name) public {
+    parties.push(msg.sender);
+    party_map[msg.sender] = party_name;
   }
 
   function read_party(address party_address) public view returns(string memory party_name) {
