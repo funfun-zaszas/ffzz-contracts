@@ -1,9 +1,12 @@
 const Ethpain = artifacts.require("Ethpain")
+const WBI = artifacts.require("WitnetBridgeInterface")
 
 contract("Ethpain", accounts => {
   describe("Ethpain test suite", () => {
     let ethpain
+    let wbi
     before(async () => {
+      wbi = await WBI.deployed()
       ethpain = await Ethpain.deployed()
     })
 
@@ -53,7 +56,8 @@ contract("Ethpain", accounts => {
     })
 
     it("create a proposal and post result", async () => {
-      await ethpain.post_proposal_result(0, true)
+      await ethpain.create_proposal("My new proposal", "My new dr 1")
+      await wbi.report_result(0, true)
       assert.equal(await ethpain.read_proposal_result(0), true)
     })
 

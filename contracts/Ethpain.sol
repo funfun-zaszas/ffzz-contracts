@@ -39,9 +39,7 @@ contract Ethpain {
 
   mapping (address => Party) party_map;
   mapping (address => Program) program_map;
-
   mapping (uint256 => Proposal) proposal_map;
-  mapping (uint256 => bool) proposal_success;
 
   constructor (address _wbi, string memory _name, uint _seats) public payable {
     total_funding = msg.value;
@@ -96,12 +94,8 @@ contract Ethpain {
     return (program_map[party_address].id_proposals, program_map[party_address].percentages);
   }
 
-  function post_proposal_result(uint256 proposal_id, bool bool_result) public {
-    proposal_success[proposal_id] = bool_result;
-  }
-
   function read_proposal_result(uint256 id) public view returns(bool bool_result) {
-    return proposal_success[id];
+    return wbi.read_result(id);
   }
 
   function post_seats(bytes32[] memory _labels, uint[] memory _seats) public {
@@ -114,7 +108,8 @@ contract Ethpain {
   }
 
   function claim_funds(uint256 _proposal_id) public returns(uint256 funds) {
-    require(proposal_success[_proposal_id]);
+    bool succeded = read_proposal_result(_proposal_id);
+    require(succeded);
 
     uint _seats = party_map[msg.sender].seats;
 
