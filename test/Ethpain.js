@@ -34,6 +34,8 @@ contract("Ethpain", accounts => {
       let proposal = await ethpain.read_proposal(0)
       assert.equal(proposal.description, "My new proposal")
       assert.equal(proposal.dr, "My new dr 1")
+      let proposal_list = await ethpain.read_proposals()
+      assert.equal(proposal_list.length, 1)
     })
 
     it("should check public atributes", async () => {

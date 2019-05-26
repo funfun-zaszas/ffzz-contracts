@@ -36,6 +36,7 @@ contract Ethpain {
     bool[] claimed;
   }
 
+  uint256[] proposal_list;
   address[] public parties;
   mapping (bytes32 => address) party_addresses;
 
@@ -72,6 +73,7 @@ contract Ethpain {
     uint256 dr_id = wbi.post_dr(proposal_dr);
     proposal_map[dr_id].description = proposal_description;
     proposal_map[dr_id].data_request = proposal_dr;
+    proposal_list.push(dr_id);
     return dr_id;
   }
 
@@ -88,6 +90,10 @@ contract Ethpain {
 
   function read_proposal(uint256 id) public view returns(string memory description, string memory dr) {
     return (proposal_map[id].description, proposal_map[id].data_request);
+  }
+
+  function read_proposals() public view returns(uint256[] memory ids) {
+    return proposal_list;
   }
 
   function create_program(uint256[] memory id_proposals, uint256[] memory percentages) public {
