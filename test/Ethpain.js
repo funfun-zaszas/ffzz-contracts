@@ -36,6 +36,12 @@ contract("Ethpain", accounts => {
       assert.equal(proposal.dr, "My new dr 1")
     })
 
+    it("should check public atributes", async () => {
+      assert.equal(await ethpain.name.call(), "ethpain")
+      assert.equal(await ethpain.total_seats.call(), 350)
+      assert.equal(await ethpain.total_funding.call(), web3.utils.toWei("1", "ether"))
+    })
+
     it("should create program with proposals", async () => {
       let proposals = ["My new proposal 1", "My new proposal 2", "My new proposal 3"]
       let data_requests = ["My new dr 1", "My new dr 2", "My new dr 3"]

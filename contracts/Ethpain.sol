@@ -11,8 +11,8 @@ contract Ethpain {
 
   address owner;
   string public name;
-  uint total_seats;
-  uint256 total_funding;
+  uint public total_seats;
+  uint256 public total_funding;
   // bytes public election_wdr;
 
   struct Party {
