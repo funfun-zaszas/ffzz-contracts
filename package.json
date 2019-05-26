@@ -14,8 +14,9 @@
     "lint": "eslint ./test",
     "lint:fix": "eslint ./test --fix",
     "coverage": "solidity-coverage",
-    "run:local": "ganache-cli",
-    "deploy:local": "truffle deploy --network local"
+    "run:local": "ganache-cli -s 1234",
+    "deploy:local": "truffle deploy --network local",
+    "deploy:ganache": "truffle deploy --network ganache"
   },
   "author": "Witnet Foundation <info@witnet.foundation>",
   "repository": {

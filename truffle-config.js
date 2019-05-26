@@ -47,6 +47,11 @@ module.exports = {
       port: 8545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
     },
+    ganache: {
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 7545,            // Standard Ethereum port (default: none)
+      network_id: "*",       // Any network (default: none)
+    },
     development: {
       provider: require("ganache-cli").provider({ gasLimit: 100000000 }),
       network_id: "*",
